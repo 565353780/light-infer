@@ -1,3 +1,4 @@
+import os
 import torch
 from torch import nn
 from typing import Union
@@ -61,7 +62,8 @@ class Trainer(BaseTrainer):
         return
 
     def createDatasets(self) -> bool:
-        light_file_path = "/Users/chli/chLi/Dataset/Light/3+.txt"
+        home = os.environ["HOME"]
+        light_file_path = home + "/chLi/Dataset/Light/3+.txt"
 
         self.dataloader_dict["name"] = {
             "dataset": LightFileDataset(light_file_path, "train", self.dtype),
