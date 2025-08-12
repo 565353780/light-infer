@@ -19,7 +19,7 @@ class LightFileDataset(Dataset):
 
         assert isinstance(light_data_dict, dict)
 
-        self.data_list = torch.from_numpy(light_data_dict["XYDATA"])
+        self.data_list = torch.from_numpy(light_data_dict["XYDATA"]).unsqueeze(-1)
         return
 
     def __len__(self):
