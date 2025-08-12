@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from torch import nn
 
 
 def renderXYData(xy_data_array: np.ndarray) -> bool:
@@ -39,3 +40,12 @@ def renderXYData(xy_data_array: np.ndarray) -> bool:
     plt.tight_layout(rect=[0, 0.03, 1, 0.97])
     plt.show()
     return True
+
+
+def renderInferXYData(xy_data_array: np.ndarray, model: nn.Module) -> np.ndarray:
+    wavelength = xy_data_array[:, 0]
+    gt_y1 = xy_data_array[:, 1]  # g(lum)
+
+    infer_y1 = []
+
+    return

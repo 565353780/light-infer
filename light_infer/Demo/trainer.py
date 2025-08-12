@@ -2,23 +2,26 @@ import sys
 
 sys.path.append("../base-trainer")
 
+import os
 import torch
 
 from light_infer.Module.trainer import Trainer
 
 
 def demo():
-    batch_size = 32
+    home = os.environ["HOME"]
+    root_dataset_folder_path = home + "/chLi/Dataset/Light/"
+    batch_size = 256
     accum_iter = 1
     num_workers = 16
     model_file_path = "./output/test/model_last.pth"
     model_file_path = None
     weights_only = False
     device = "auto"
-    dtype = torch.float32
+    dtype = torch.float64
     warm_step_num = 0
     finetune_step_num = -1
-    lr = 2e-4
+    lr = 1e-6
     lr_batch_size = 256
     ema_start_step = 5000
     ema_decay_init = 0.99
@@ -32,6 +35,7 @@ def demo():
     quick_test = False
 
     trainer = Trainer(
+        root_dataset_folder_path,
         batch_size,
         accum_iter,
         num_workers,

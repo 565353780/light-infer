@@ -1,17 +1,17 @@
-import os
 import torch
 from torch import nn
 from typing import Union
 
 from base_trainer.Module.base_trainer import BaseTrainer
 
-from light_infer.Dataset.light_file import LightFileDataset
+from light_infer.Dataset.light import LightDataset
 from light_infer.Model.spectral_cnn import SpectralCNN
 
 
 class Trainer(BaseTrainer):
     def __init__(
         self,
+        root_dataset_folder_path: str,
         batch_size: int = 16,
         accum_iter: int = 1,
         num_workers: int = 16,
@@ -34,6 +34,10 @@ class Trainer(BaseTrainer):
         use_amp: bool = False,
         quick_test: bool = False,
     ) -> None:
+        self.root_dataset_folder_path = root_dataset_folder_path
+
+        self.loss_func = nn.MSELoss()
+
         super().__init__(
             batch_size,
             accum_iter,
@@ -57,21 +61,16 @@ class Trainer(BaseTrainer):
             use_amp,
             quick_test,
         )
-
-        self.loss_func = nn.MSELoss()
         return
 
     def createDatasets(self) -> bool:
-        home = os.environ["HOME"]
-        light_file_path = home + "/chLi/Dataset/Light/3+.txt"
-
         self.dataloader_dict["name"] = {
-            "dataset": LightFileDataset(light_file_path, "train", self.dtype),
+            "dataset": LightDataset(self.root_dataset_folder_path, "train", self.dtype),
             "repeat_num": 1,
         }
 
         self.dataloader_dict["eval"] = {
-            "dataset": LightFileDataset(light_file_path, "val", self.dtype),
+            "dataset": LightDataset(self.root_dataset_folder_path, "val", self.dtype),
         }
 
         # crop data num for faster evaluation

@@ -23,7 +23,10 @@ class LightFileDataset(Dataset):
         return
 
     def __len__(self):
-        return len(self.data_list)
+        if self.split == "train":
+            return 1000 * len(self.data_list)
+        else:
+            return len(self.data_list)
 
     def __getitem__(self, index):
         index = index % len(self.data_list)
