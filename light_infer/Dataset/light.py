@@ -14,9 +14,11 @@ class LightDataset(Dataset):
         root_dataset_folder_path: str,
         split: str = "train",
         dtype=torch.float32,
+        load_full_xy_data: bool = False,
     ) -> None:
         self.split = split
         self.dtype = dtype
+        self.load_full_xy_data = load_full_xy_data
 
         self.light_data_dict = loadLightDataset(root_dataset_folder_path)
         assert isinstance(self.light_data_dict, dict)
@@ -52,18 +54,21 @@ class LightDataset(Dataset):
             "ranliao_idx": torch.tensor(
                 [RANLIAO_IDXS[light_info_dict["ranliao"]]], dtype=torch.int64
             ),
+            "ranliao_density_idx": torch.tensor(
+                [light_info_dict["ranliao_density_idx"] - 1], dtype=torch.int64
+            ),
             "ningjiao_density_idx": torch.tensor(
                 [light_info_dict["ningjiao_density_idx"] - 1], dtype=torch.int64
             ),
             "ningjiao_height": torch.tensor(
                 [light_info_dict["ningjiao_height"]], dtype=self.dtype
             ),
-            "ranliao_density_idx": torch.tensor(
-                [light_info_dict["ranliao_density_idx"] - 1], dtype=torch.int64
-            ),
             "add_angle": torch.tensor([light_info_dict["add_angle"]], dtype=self.dtype),
             "bochang": torch.tensor([xy_data[train_idx][0]], dtype=self.dtype),
             "g": torch.tensor([xy_data[train_idx][1]], dtype=self.dtype),
         }
+
+        if self.load_full_xy_data:
+            data["xy_data"] = torch.tensor(xy_data, dtype=self.dtype)
 
         return data
