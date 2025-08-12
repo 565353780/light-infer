@@ -28,7 +28,7 @@ class LightDataset(Dataset):
 
     def __len__(self):
         if self.split == "train":
-            return 10 * len(self.data_list)
+            return 100 * len(self.data_list)
         else:
             return len(self.data_list)
 

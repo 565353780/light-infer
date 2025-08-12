@@ -7,25 +7,35 @@ from light_infer.Model.point_embed import PointEmbed
 class LightModel(nn.Module):
     def __init__(
         self,
-        hidden_dim: int = 512,
+        hidden_dim: int = 768,
+        dropout_p: float = 0.2,  # 新增 dropout 参数
     ) -> None:
         super().__init__()
         self.hidden_dim = hidden_dim
+        self.dropout_p = dropout_p
 
         self.ranliao_embedding = nn.Embedding(4, self.hidden_dim)
         self.ranliao_density_embedding = nn.Embedding(6, self.hidden_dim)
         self.ningjiao_density_embedding = nn.Embedding(5, self.hidden_dim)
 
-        self.ningjiao_height_encoder = PointEmbed(1, 48, self.hidden_dim)
-        self.add_angle_encoder = PointEmbed(1, 48, self.hidden_dim)
-        self.bochang_encoder = PointEmbed(1, 48, self.hidden_dim)
+        self.ningjiao_height_encoder = PointEmbed(1, 64, self.hidden_dim)
+        self.add_angle_encoder = PointEmbed(1, 64, self.hidden_dim)
+        self.bochang_encoder = PointEmbed(1, 64, self.hidden_dim)
 
         self.g_decoder = nn.Sequential(
-            nn.Linear(6 * self.hidden_dim, 1024),
+            nn.Linear(6 * self.hidden_dim, 2048),
             nn.ReLU(),
-            nn.Linear(1024, 256),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(2048, 1024),
             nn.ReLU(),
-            nn.Linear(256, 1),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(512, 128),
+            nn.ReLU(),
+            nn.Dropout(self.dropout_p),
+            nn.Linear(128, 1),
         )
         return
 
