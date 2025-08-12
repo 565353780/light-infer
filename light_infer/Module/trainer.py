@@ -5,7 +5,7 @@ from typing import Union
 from base_trainer.Module.base_trainer import BaseTrainer
 
 from light_infer.Dataset.light import LightDataset
-from light_infer.Model.spectral_cnn import SpectralCNN
+from light_infer.Model.light import LightModel
 
 
 class Trainer(BaseTrainer):
@@ -80,7 +80,7 @@ class Trainer(BaseTrainer):
         return True
 
     def createModel(self) -> bool:
-        self.model = SpectralCNN().to(self.device, dtype=self.dtype)
+        self.model = LightModel().to(self.device, dtype=self.dtype)
         return True
 
     def preProcessData(self, data_dict: dict, is_training: bool = False) -> dict:
@@ -92,10 +92,10 @@ class Trainer(BaseTrainer):
         return data_dict
 
     def getLossDict(self, data_dict: dict, result_dict: dict) -> dict:
-        gt_output = data_dict["output"]
-        output = result_dict["output"]
+        gt_g = data_dict["g"]
+        pred_g = result_dict["g"]
 
-        loss = self.loss_func(gt_output, output)
+        loss = self.loss_func(gt_g, pred_g)
 
         loss_dict = {
             "Loss": loss,

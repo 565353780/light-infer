@@ -53,13 +53,13 @@ class LightDataset(Dataset):
                 [RANLIAO_IDXS[light_info_dict["ranliao"]]], dtype=torch.int64
             ),
             "ningjiao_density_idx": torch.tensor(
-                [light_info_dict["ningjiao_density_idx"]], dtype=torch.int64
+                [light_info_dict["ningjiao_density_idx"] - 1], dtype=torch.int64
             ),
             "ningjiao_height": torch.tensor(
                 [light_info_dict["ningjiao_height"]], dtype=self.dtype
             ),
             "ranliao_density_idx": torch.tensor(
-                [light_info_dict["ranliao_density_idx"]], dtype=torch.int64
+                [light_info_dict["ranliao_density_idx"] - 1], dtype=torch.int64
             ),
             "add_angle": torch.tensor([light_info_dict["add_angle"]], dtype=self.dtype),
             "bochang": torch.tensor([xy_data[train_idx][0]], dtype=self.dtype),
