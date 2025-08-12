@@ -5,3 +5,7 @@ __pycache__
 # output
 logs
 ouptut
+
+# script
+sync.sh
+sync_result.sh
