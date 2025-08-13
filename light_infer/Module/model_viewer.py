@@ -91,6 +91,7 @@ class ModelViewer(object):
         toVideo(
             tmp_video_image_folder_path,
             tmp_save_video_file_path,
+            10,
         )
 
         renameFile(tmp_save_video_file_path, save_video_file_path)

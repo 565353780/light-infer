@@ -33,7 +33,7 @@ def demo():
         save_video_file_path,
         ningjiao_height_min=0.2,
         ningjiao_height_max=1.5,
-        ningjiao_height_step=0.01,
+        ningjiao_height_step=0.001,
         bochang_min=400.0,
         bochang_max=800.0,
         bochang_step=0.5,

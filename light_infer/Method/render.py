@@ -97,8 +97,8 @@ def renderBatchInferXYData(
         ax.set_xlabel("wavelength")
         ax.set_ylabel("g")
         ax.set_title("g=Model(wavelength)")
-        ax.set_xlim(400, 800)
-        ax.set_ylim(-0.5, 0.8)
+        # ax.set_xlim(400, 800)
+        # ax.set_ylim(-0.5, 0.8)
 
     plt.tight_layout()
 
