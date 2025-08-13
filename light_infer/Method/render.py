@@ -39,3 +39,61 @@ def renderXYData(xy_data_array: np.ndarray) -> bool:
     plt.tight_layout(rect=[0, 0.03, 1, 0.97])
     plt.show()
     return True
+
+
+def renderBatchInferXYData(
+    batch_bochang: np.ndarray,
+    batch_gt_g: np.ndarray,
+    batch_pred_g: np.ndarray,
+) -> bool:
+    batch_size = batch_bochang.shape[0]
+
+    col_num = int(np.ceil(np.sqrt(batch_size)))
+    row_num = batch_size // col_num + (batch_size % col_num > 0)
+
+    fig, axes = plt.subplots(row_num, col_num, figsize=(19.2, 10.8), dpi=100)
+
+    axes = np.atleast_2d(axes)
+
+    for i in range(batch_size):
+        row_idx = i // col_num
+        col_idx = i % col_num
+
+        ax = axes[row_idx, col_idx]
+
+        ax.plot(
+            batch_bochang[i],
+            batch_gt_g[i],
+            label="GT g",
+            color="blue",
+            linewidth=2,
+            linestyle="--",
+        )
+        ax.plot(
+            batch_bochang[i],
+            batch_pred_g[i],
+            label="Pred g",
+            color="red",
+            linewidth=2,
+        )
+
+        ax.set_title("No." + str(i))
+        ax.set_xlabel("wavelength")
+        ax.set_ylabel("g")
+        ax.set_title("g=Model(wavelength)")
+
+    plt.tight_layout()
+
+    plt.show()
+
+    return True
+
+
+def renderInferXYData(
+    bochang: np.ndarray,
+    gt_g: np.ndarray,
+    pred_g: np.ndarray,
+) -> bool:
+    return renderBatchInferXYData(
+        bochang[np.newaxis, :], gt_g[np.newaxis, :], pred_g[np.newaxis, :]
+    )
