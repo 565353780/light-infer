@@ -1,7 +1,6 @@
 import os
 import torch
 import numpy as np
-import matplotlib.pyplot as plt
 from tqdm import trange
 from typing import Union
 
@@ -147,19 +146,16 @@ class Detector(object):
         return final_result
 
     @torch.no_grad()
-    def renderInferXYData(
+    def detectWithBochang(
         self,
         ranliao_idx: int,
         ranliao_density_idx: int,
         ningjiao_density_idx: int,
         ningjiao_height: float,
         add_angle: float,
-        xy_data_array: np.ndarray,
-    ) -> bool:
-        batch_size = xy_data_array.shape[0]
-
-        wavelength = xy_data_array[:, 0]
-        gt_g = xy_data_array[:, 1]  # g(lum)
+        batch_bochang: np.ndarray,
+    ) -> np.ndarray:
+        batch_size = batch_bochang.shape[0]
 
         data_dict = {
             "ranliao_idx": torch.tensor(
@@ -185,7 +181,7 @@ class Detector(object):
             "add_angle": torch.tensor([add_angle], dtype=self.dtype, device=self.device)
             .view(1, 1)
             .expand(batch_size, 1),
-            "bochang": torch.from_numpy(wavelength)
+            "bochang": torch.from_numpy(batch_bochang)
             .view(-1, 1)
             .to(dtype=self.dtype, device=self.device),
         }
@@ -194,24 +190,4 @@ class Detector(object):
 
         pred_g = result_dict["g"].cpu().numpy().reshape(-1)
 
-        # ---------- 画图 ----------
-        plt.rcParams["font.sans-serif"] = ["SimHei"]  # 黑体，支持中文
-        plt.rcParams["axes.unicode_minus"] = False  # 负号正常显示
-
-        fig, ax = plt.subplots(2, 1, figsize=(12, 8))
-        fig.suptitle("CPL 光谱数据", fontsize=16)
-
-        ax[0].plot(wavelength, gt_g, color="tab:blue")
-        ax[0].set_title("GT g(lum)")
-        ax[0].set_xlabel("波长 [nm]")
-        ax[0].set_ylabel("GT g(lum)")
-
-        ax[1].plot(wavelength, pred_g, color="tab:orange")
-        ax[1].set_title("Pred g(lum)")
-        ax[1].set_xlabel("波长 [nm]")
-        ax[1].set_ylabel("Pred g(lum)")
-
-        plt.tight_layout(rect=[0, 0.03, 1, 0.97])
-        plt.show()
-
-        return True
+        return pred_g
