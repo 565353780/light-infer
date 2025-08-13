@@ -1,5 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Union
+
+from light_infer.Method.path import createFileFolder, renameFile
 
 
 def renderXYData(xy_data_array: np.ndarray) -> bool:
@@ -43,15 +46,26 @@ def renderXYData(xy_data_array: np.ndarray) -> bool:
 
 def renderBatchInferXYData(
     batch_bochang: np.ndarray,
-    batch_gt_g: np.ndarray,
     batch_pred_g: np.ndarray,
+    batch_gt_g: Union[np.ndarray, None] = None,
+    render: bool = True,
+    save_image_file_path: Union[str, None] = None,
 ) -> bool:
+    image_width = 1920
+    image_height = 1080
+    dpi = 100
+
     batch_size = batch_bochang.shape[0]
 
     col_num = int(np.ceil(np.sqrt(batch_size)))
     row_num = batch_size // col_num + (batch_size % col_num > 0)
 
-    fig, axes = plt.subplots(row_num, col_num, figsize=(19.2, 10.8), dpi=100)
+    fig, axes = plt.subplots(
+        row_num,
+        col_num,
+        figsize=(1.0 * image_width / dpi, 1.0 * image_height / dpi),
+        dpi=dpi,
+    )
 
     axes = np.atleast_2d(axes)
 
@@ -63,37 +77,64 @@ def renderBatchInferXYData(
 
         ax.plot(
             batch_bochang[i],
-            batch_gt_g[i],
-            label="GT g",
-            color="blue",
-            linewidth=2,
-            linestyle="--",
-        )
-        ax.plot(
-            batch_bochang[i],
             batch_pred_g[i],
             label="Pred g",
             color="red",
             linewidth=2,
         )
 
+        if batch_gt_g is not None:
+            ax.plot(
+                batch_bochang[i],
+                batch_gt_g[i],
+                label="GT g",
+                color="blue",
+                linewidth=2,
+                linestyle="--",
+            )
+
         ax.set_title("No." + str(i))
         ax.set_xlabel("wavelength")
         ax.set_ylabel("g")
         ax.set_title("g=Model(wavelength)")
+        ax.set_xlim(400, 800)
+        ax.set_ylim(-0.5, 0.8)
 
     plt.tight_layout()
 
-    plt.show()
+    if render:
+        plt.show()
 
+    if save_image_file_path is not None:
+        tmp_save_image_file_path = (
+            save_image_file_path[:-4] + "_tmp" + save_image_file_path[-4:]
+        )
+        createFileFolder(tmp_save_image_file_path)
+
+        fig.savefig(tmp_save_image_file_path, dpi=dpi)
+
+        renameFile(tmp_save_image_file_path, save_image_file_path)
+
+    plt.close()
     return True
 
 
 def renderInferXYData(
     bochang: np.ndarray,
-    gt_g: np.ndarray,
     pred_g: np.ndarray,
+    gt_g: Union[np.ndarray, None] = None,
+    render: bool = True,
+    save_image_file_path: Union[str, None] = None,
 ) -> bool:
+    if gt_g is not None:
+        batch_gt_g = gt_g[np.newaxis, :]
+    else:
+        batch_gt_g = gt_g
+
     return renderBatchInferXYData(
-        bochang[np.newaxis, :], gt_g[np.newaxis, :], pred_g[np.newaxis, :]
+        bochang[np.newaxis, :],
+        pred_g[np.newaxis, :],
+        batch_gt_g,
+        render,
+        save_image_file_path,
     )
