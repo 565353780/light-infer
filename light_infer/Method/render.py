@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import trange
 from typing import Union
 
 from light_infer.Method.path import createFileFolder, renameFile
@@ -69,7 +70,9 @@ def renderBatchInferXYData(
 
     axes = np.atleast_2d(axes)
 
-    for i in range(batch_size):
+    print("[INFO][render::renderBatchInferXYData]")
+    print("\t start render infer result...")
+    for i in trange(batch_size):
         row_idx = i // col_num
         col_idx = i % col_num
 
